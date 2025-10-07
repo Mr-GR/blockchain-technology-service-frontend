@@ -7,7 +7,7 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import Link from 'next/link';
 
 export default function AdminPage() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const [recipientAddress, setRecipientAddress] = useState('');
   const [courseName, setCourseName] = useState('');
   const [recipientName, setRecipientName] = useState('');

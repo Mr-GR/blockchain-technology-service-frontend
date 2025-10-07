@@ -69,7 +69,7 @@ export default function ConnectPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 mt-0.5">✓</span>
-                    <span>Access admin panel if you're an issuer</span>
+                    <span>Access admin panel if you&apos;re an issuer</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 mt-0.5">✓</span>
@@ -89,7 +89,7 @@ export default function ConnectPage() {
           {/* Additional Info */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600 mb-4">
-              Don't have a wallet yet?{' '}
+              Don&apos;t have a wallet yet?{' '}
               <a
                 href="https://metamask.io/"
                 target="_blank"
