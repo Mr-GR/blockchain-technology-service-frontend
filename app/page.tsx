@@ -5,9 +5,11 @@ import { useAccount, useReadContract } from 'wagmi';
 import { CONTRACT_ADDRESS, CONTRACT_ABI, BLOCK_EXPLORER } from '@/lib/contract';
 import { CertificateCard } from '@/components/CertificateCard';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
   const { address, isConnected } = useAccount();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { data: totalCerts } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -40,7 +42,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10 animate-slide-in">
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 animate-slide-in">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-slow">
@@ -53,8 +55,75 @@ export default function Home() {
               <p className="text-xs text-gray-500 leading-tight">Soulbound Credentials</p>
             </div>
           </div>
-          <ConnectButton />
+
+          {/* Hamburger Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg
+              className="w-6 h-6 text-gray-700"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {isMenuOpen ? (
+                <path d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
+
+        {/* Dropdown Menu */}
+        {isMenuOpen && (
+          <div className="absolute top-full left-0 right-0 bg-white border-b shadow-lg animate-fade-in">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <nav className="flex flex-col gap-2">
+                <Link
+                  href="/connect"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 rounded-lg transition-all group"
+                >
+                  <span className="text-2xl">🔗</span>
+                  <div>
+                    <div className="font-semibold text-gray-800 group-hover:text-purple-600">Connect Wallet</div>
+                    <div className="text-sm text-gray-500">Link your Web3 wallet</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 rounded-lg transition-all group"
+                >
+                  <span className="text-2xl">👨‍💼</span>
+                  <div>
+                    <div className="font-semibold text-gray-800 group-hover:text-orange-600">Admin Panel</div>
+                    <div className="text-sm text-gray-500">Issue certificates</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/verify"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50 rounded-lg transition-all group"
+                >
+                  <span className="text-2xl">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-800 group-hover:text-green-600">Verify Certificate</div>
+                    <div className="text-sm text-gray-500">Check authenticity</div>
+                  </div>
+                </Link>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -76,8 +145,8 @@ export default function Home() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto px-4">
             {/* Step 1 */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-purple-200 hover:border-purple-400 transition-all hover:scale-105">
+            <div className="relative flex flex-col">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-purple-200 hover:border-purple-400 transition-all hover:scale-105 flex-1 flex flex-col">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl">
                   📚
                 </div>
@@ -87,7 +156,7 @@ export default function Home() {
                 <h4 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 text-center">
                   Complete Course
                 </h4>
-                <p className="text-sm sm:text-base text-gray-600 text-center">
+                <p className="text-sm sm:text-base text-gray-600 text-center flex-1">
                   Finish your course or achievement requirements
                 </p>
               </div>
@@ -102,8 +171,8 @@ export default function Home() {
             </div>
 
             {/* Step 2 */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:scale-105">
+            <div className="relative flex flex-col">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:scale-105 flex-1 flex flex-col">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl">
                   🎖️
                 </div>
@@ -113,7 +182,7 @@ export default function Home() {
                 <h4 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 text-center">
                   Receive NFT
                 </h4>
-                <p className="text-sm sm:text-base text-gray-600 text-center">
+                <p className="text-sm sm:text-base text-gray-600 text-center flex-1">
                   Get your certificate minted as an NFT on the blockchain
                 </p>
               </div>
@@ -128,8 +197,8 @@ export default function Home() {
             </div>
 
             {/* Step 3 */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-green-200 hover:border-green-400 transition-all hover:scale-105">
+            <div className="relative flex flex-col">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-green-200 hover:border-green-400 transition-all hover:scale-105 flex-1 flex flex-col">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl">
                   🔒
                 </div>
@@ -139,7 +208,7 @@ export default function Home() {
                 <h4 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 text-center">
                   Own Forever
                 </h4>
-                <p className="text-sm sm:text-base text-gray-600 text-center">
+                <p className="text-sm sm:text-base text-gray-600 text-center flex-1">
                   Your certificate is permanently yours, non-transferable and verifiable
                 </p>
               </div>
@@ -166,19 +235,10 @@ export default function Home() {
         </div>
 
         {/* Action Links */}
-        <div className="mb-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 animate-fade-in">
-          <Link
-            href="/admin"
-            className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:scale-105 text-sm sm:text-base"
-          >
-            <span>👨‍💼</span>
-            <span className="hidden sm:inline">Admin Panel - Issue Certificates</span>
-            <span className="sm:hidden">Admin Panel</span>
-          </Link>
-
+        <div className="mb-8 flex justify-center animate-fade-in">
           <Link
             href="/verify"
-            className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-lg hover:from-green-600 hover:to-teal-600 transition-all shadow-lg hover:scale-105 text-sm sm:text-base"
+            className="inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-lg hover:from-green-600 hover:to-teal-600 transition-all shadow-lg hover:scale-105 text-base sm:text-lg"
           >
             <span>✓</span>
             Verify Certificate
