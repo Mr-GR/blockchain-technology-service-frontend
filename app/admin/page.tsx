@@ -83,7 +83,9 @@ export default function AdminPage() {
               <div className="text-6xl mb-4">🔐</div>
               <h3 className="text-xl font-bold mb-4">Connect Your Wallet</h3>
               <p className="text-gray-600 mb-6">You need to connect as the contract owner to issue certificates</p>
-              <ConnectButton />
+              <div className="flex justify-center">
+                <ConnectButton />
+              </div>
             </div>
           ) : (
             <form onSubmit={handleIssueCertificate} className="space-y-6">
