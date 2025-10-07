@@ -1,36 +1,168 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Certification NFT - Soulbound Digital Credentials
+
+A blockchain-based certification system using non-transferable (soulbound) NFTs for issuing verifiable credentials on Polygon Amoy testnet.
+
+## Overview
+
+Certification NFT is a decentralized application that enables institutions, bootcamps, and organizations to issue tamper-proof, verifiable digital certificates as NFTs. These certificates are **soulbound** (non-transferable), ensuring they permanently represent the recipient's achievement.
+
+### Key Features
+
+- **Soulbound NFTs** - Certificates cannot be transferred or sold
+-  **Verifiable Credentials** - On-chain proof of achievement
+-  **Admin Panel** - Easy certificate issuance interface
+-  **Certificate Gallery** - Beautiful display of earned certificates
+-  **Verification Tool** - Anyone can verify certificate ownership
+-  **Blockchain Transparency** - All data publicly verifiable on Polygonscan
+
+## Tech Stack
+
+### Smart Contract
+- **Solidity** - Smart contract development
+- **OpenZeppelin** - Secure ERC-721 implementation
+- **Hardhat** - Ethereum development environment
+- **Polygon Amoy** - Testnet deployment
+
+### Frontend
+- **Next.js 14** - React framework
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Styling
+- **wagmi** - React hooks for Ethereum
+- **viem** - Ethereum library
+- **RainbowKit** - Wallet connection UI
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ installed
+- MetaMask or compatible Web3 wallet
+- Polygon Amoy testnet configured in wallet
 
+### Installation
+
+1. **Clone the repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd hackathon-token-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install frontend dependencies**
+```bash
+cd frontend
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Run the development server**
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Open your browser**
+```
+http://localhost:3000
+```
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+### For Certificate Issuers (Admins)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Connect your wallet (must be contract owner)
+2. Navigate to **Admin Panel**
+3. Fill in certificate details:
+   - Recipient wallet address
+   - Course/achievement name
+   - Recipient name
+   - Achievement level
+4. Click "Issue Certificate"
+5. Approve the transaction in MetaMask
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### For Certificate Recipients
 
-## Deploy on Vercel
+1. Connect your wallet to the app
+2. Switch to **Polygon Amoy** network
+3. View your certificates on the home page
+4. Certificates appear automatically once issued
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### For Verifiers
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Navigate to **Verify Certificate**
+2. Enter the wallet address to verify
+3. Enter the course/achievement name
+4. Click "Verify Certificate"
+5. See instant verification results
+
+## Smart Contract
+
+**Contract Address:** `0xbc9bb1E472c072B085415481D83f11BBcC629915`
+
+**Network:** Polygon Amoy Testnet (Chain ID: 80002)
+
+**Explorer:** [View on Polygonscan](https://amoy.polygonscan.com/address/0xbc9bb1E472c072B085415481D83f11BBcC629915)
+
+### Contract Features
+
+- **ERC-721 Standard** - NFT compatibility
+- **Soulbound Mechanism** - Prevents transfers
+- **Batch Issuance** - Issue multiple certificates at once
+- **On-chain Metadata** - Store certificate details permanently
+- **Verification Functions** - Public verification methods
+
+## Screenshots
+
+_Screenshots will be added here_
+
+### Home Page
+<!-- Add screenshot -->
+
+### Certificate Gallery
+<!-- Add screenshot -->
+
+### Admin Panel
+<!-- Add screenshot -->
+
+### Verification Tool
+<!-- Add screenshot -->
+
+### Mobile View
+<!-- Add screenshot -->
+
+## Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import project to [Vercel](https://vercel.com)
+3. Deploy with default settings
+4. (Optional) Add custom domain in Vercel settings
+
+### Environment Variables (Optional)
+
+```env
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
+```
+
+Get a free WalletConnect Project ID at [cloud.walletconnect.com](https://cloud.walletconnect.com)
+
+## Security
+
+-  Soulbound tokens prevent unauthorized transfers
+-  Only contract owner can issue certificates
+-  Private keys never exposed (stored in `.env`)
+-  All certificate data verifiable on blockchain
+-  Immutable certificate records
+
+## 📄 License
+
+ISC
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+## 👨‍💼 Author
+
+Built for hackathon demonstration
+
+---
+
+**Smart Contract:** [View on Polygonscan](https://amoy.polygonscan.com/address/0xbc9bb1E472c072B085415481D83f11BBcC629915)
