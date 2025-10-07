@@ -41,16 +41,16 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10 animate-slide-in">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-slow">
               <span className="text-white text-lg sm:text-xl font-bold">🎓</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight pb-0.5">
                 Certification NFT
               </h1>
-              <p className="text-xs text-gray-500">Soulbound Credentials</p>
+              <p className="text-xs text-gray-500 leading-tight">Soulbound Credentials</p>
             </div>
           </div>
           <ConnectButton />
@@ -61,12 +61,90 @@ export default function Home() {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent px-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent px-4 pb-2">
             Digital Credentials on Blockchain
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
             Verifiable, non-transferable NFT certificates for courses, achievements, and credentials
           </p>
+        </div>
+
+        {/* How It Works Section */}
+        <div className="mb-12 sm:mb-16 animate-fade-in">
+          <h3 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 text-gray-800">
+            How It Works
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto px-4">
+            {/* Step 1 */}
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-purple-200 hover:border-purple-400 transition-all hover:scale-105">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl">
+                  📚
+                </div>
+                <div className="absolute -top-3 -left-3 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+                  1
+                </div>
+                <h4 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 text-center">
+                  Complete Course
+                </h4>
+                <p className="text-sm sm:text-base text-gray-600 text-center">
+                  Finish your course or achievement requirements
+                </p>
+              </div>
+              {/* Arrow for desktop */}
+              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 text-3xl text-purple-300">
+                →
+              </div>
+              {/* Arrow for mobile */}
+              <div className="md:hidden flex justify-center mt-4 mb-2 text-3xl text-purple-300 rotate-90">
+                →
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:scale-105">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl">
+                  🎖️
+                </div>
+                <div className="absolute -top-3 -left-3 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+                  2
+                </div>
+                <h4 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 text-center">
+                  Receive NFT
+                </h4>
+                <p className="text-sm sm:text-base text-gray-600 text-center">
+                  Get your certificate minted as an NFT on the blockchain
+                </p>
+              </div>
+              {/* Arrow for desktop */}
+              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 text-3xl text-blue-300">
+                →
+              </div>
+              {/* Arrow for mobile */}
+              <div className="md:hidden flex justify-center mt-4 mb-2 text-3xl text-blue-300 rotate-90">
+                →
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-green-200 hover:border-green-400 transition-all hover:scale-105">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl">
+                  🔒
+                </div>
+                <div className="absolute -top-3 -left-3 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+                  3
+                </div>
+                <h4 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 text-center">
+                  Own Forever
+                </h4>
+                <p className="text-sm sm:text-base text-gray-600 text-center">
+                  Your certificate is permanently yours, non-transferable and verifiable
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Contract Stats */}
