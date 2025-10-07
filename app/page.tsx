@@ -1,102 +1,195 @@
-import Image from "next/image";
+'use client';
+
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useReadContract } from 'wagmi';
+import { CONTRACT_ADDRESS, CONTRACT_ABI, BLOCK_EXPLORER } from '@/lib/contract';
+import { CertificateCard } from '@/components/CertificateCard';
+import Link from 'next/link';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { address, isConnected } = useAccount();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const { data: totalCerts } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'totalCertifications',
+  });
+
+  const { data: contractName } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'name',
+  });
+
+  const { data: symbol } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'symbol',
+  });
+
+  const { data: userCertIds } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'getCertifications',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    },
+  });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10 animate-slide-in">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-slow">
+              <span className="text-white text-lg sm:text-xl font-bold">🎓</span>
+            </div>
+            <div className="hidden sm:block">
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Certification NFT
+              </h1>
+              <p className="text-xs text-gray-500">Soulbound Credentials</p>
+            </div>
+          </div>
+          <ConnectButton />
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent px-4">
+            Digital Credentials on Blockchain
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
+            Verifiable, non-transferable NFT certificates for courses, achievements, and credentials
+          </p>
+        </div>
+
+        {/* Contract Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12 animate-fade-in">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-purple-100 hover:shadow-xl transition-shadow">
+            <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">Contract Name</div>
+            <div className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{contractName as string || 'Loading...'}</div>
+          </div>
+
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-blue-100 hover:shadow-xl transition-shadow">
+            <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">Symbol</div>
+            <div className="text-lg sm:text-2xl font-bold text-gray-900">{symbol as string || 'Loading...'}</div>
+          </div>
+
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-purple-100 hover:shadow-xl transition-shadow">
+            <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">Total Certificates</div>
+            <div className="text-lg sm:text-2xl font-bold text-gray-900">{totalCerts?.toString() || '0'}</div>
+          </div>
+        </div>
+
+        {/* Action Links */}
+        <div className="mb-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 animate-fade-in">
+          <Link
+            href="/admin"
+            className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:scale-105 text-sm sm:text-base"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <span>👨‍💼</span>
+            <span className="hidden sm:inline">Admin Panel - Issue Certificates</span>
+            <span className="sm:hidden">Admin Panel</span>
+          </Link>
+
+          <Link
+            href="/verify"
+            className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-lg hover:from-green-600 hover:to-teal-600 transition-all shadow-lg hover:scale-105 text-sm sm:text-base"
           >
-            Read our docs
-          </a>
+            <span>✓</span>
+            Verify Certificate
+          </Link>
+        </div>
+
+        {/* Connected State */}
+        {isConnected ? (
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-8 border border-gray-100 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+              <h3 className="text-xl sm:text-2xl font-bold">Your Certificates</h3>
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-medium w-fit">
+                {userCertIds ? (userCertIds as bigint[]).length : 0} Total
+              </span>
+            </div>
+
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-xs sm:text-sm font-medium text-gray-600">Connected Wallet</span>
+              </div>
+              <div className="font-mono text-xs sm:text-sm text-gray-800 break-all">{address}</div>
+            </div>
+
+            {userCertIds && (userCertIds as bigint[]).length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {(userCertIds as bigint[]).map((tokenId, index) => (
+                  <div
+                    key={tokenId.toString()}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <CertificateCard tokenId={tokenId} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 sm:py-12 text-gray-500">
+                <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">📜</div>
+                <p className="text-base sm:text-lg mb-1 sm:mb-2 font-medium">No certificates yet</p>
+                <p className="text-xs sm:text-sm px-4">Certificates will appear here once issued</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-8 sm:p-12 text-center border border-gray-100 animate-fade-in">
+            <div className="text-5xl sm:text-6xl mb-4 sm:mb-6">🔐</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 px-4">Connect Your Wallet</h3>
+            <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-4 max-w-md mx-auto">
+              Connect your wallet to view your certificates and verify credentials
+            </p>
+            <div className="flex justify-center">
+              <ConnectButton />
+            </div>
+          </div>
+        )}
+
+        {/* Contract Info */}
+        <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
+          <h4 className="font-semibold mb-3 text-gray-700 text-sm sm:text-base">Contract Information</h4>
+          <div className="space-y-2 text-xs sm:text-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-gray-500 font-medium">Address:</span>
+              <a
+                href={`${BLOCK_EXPLORER}/address/${CONTRACT_ADDRESS}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-purple-600 hover:text-purple-800 hover:underline break-all"
+              >
+                {CONTRACT_ADDRESS}
+              </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500">Network:</span>
+              <span className="font-medium">Polygon Amoy Testnet</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500">Type:</span>
+              <span className="font-medium">ERC-721 (Soulbound)</span>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t mt-20 py-8 bg-white/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 text-center text-gray-600 text-sm">
+          <p>Built with Next.js, wagmi, RainbowKit & Polygon Amoy</p>
+        </div>
       </footer>
     </div>
   );
