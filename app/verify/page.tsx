@@ -7,18 +7,94 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import Link from 'next/link';
 import { isAddress } from 'viem';
 
-export default function VerifyPage() {
-  const [walletAddress, setWalletAddress] = useState('');
-  const [courseName, setCourseName] = useState('');
-  const [shouldVerify, setShouldVerify] = useState(false);
+interface CertificationDetails {
+  courseName: string;
+  recipientName: string;
+  achievementLevel: string;
+  issueDate: bigint;
+  tokenURI: string;
+}
 
-  const { data: hasCertificate, isLoading } = useReadContract({
+// Component to display individual certificate details
+function CertificateCard({ tokenId }: { tokenId: bigint }) {
+  const { data: details, isLoading } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
-    functionName: 'verifyCertification',
-    args: [walletAddress as `0x${string}`, courseName],
+    functionName: 'getCertificationDetails',
+    args: [tokenId],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-6 animate-pulse">
+        <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      </div>
+    );
+  }
+
+  if (!details) return null;
+
+  const [courseName, recipientName, achievementLevel, issueDate, tokenURI] = details as [string, string, string, bigint, string];
+  const date = new Date(Number(issueDate) * 1000);
+
+  return (
+    <div className="bg-white border-2 border-purple-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+      <div className="flex items-start gap-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <span className="text-white text-2xl">🎓</span>
+        </div>
+        <div className="flex-1">
+          <h4 className="text-lg font-bold text-gray-900 mb-2">{courseName}</h4>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Recipient:</span>
+              <span className="text-sm font-semibold text-gray-900">{recipientName}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Achievement Level:</span>
+              <span className="text-sm font-semibold text-purple-600">{achievementLevel}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Issued:</span>
+              <span className="text-sm font-semibold text-gray-900">{date.toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Token ID:</span>
+              <span className="text-sm font-mono text-gray-900">#{tokenId.toString()}</span>
+            </div>
+            {tokenURI && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Metadata:</span>
+                <a
+                  href={tokenURI}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline truncate"
+                >
+                  {tokenURI.slice(0, 40)}...
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function VerifyPage() {
+  const [walletAddress, setWalletAddress] = useState('');
+  const [shouldFetch, setShouldFetch] = useState(false);
+
+  // Get all certification token IDs for the wallet
+  const { data: tokenIds, isLoading: isLoadingIds } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'getCertifications',
+    args: [walletAddress as `0x${string}`],
     query: {
-      enabled: shouldVerify && isAddress(walletAddress) && courseName.length > 0,
+      enabled: shouldFetch && isAddress(walletAddress),
     },
   });
 
@@ -30,18 +106,12 @@ export default function VerifyPage() {
       return;
     }
 
-    if (!courseName) {
-      alert('Please enter a course name');
-      return;
-    }
-
-    setShouldVerify(true);
+    setShouldFetch(true);
   };
 
   const handleReset = () => {
-    setShouldVerify(false);
+    setShouldFetch(false);
     setWalletAddress('');
-    setCourseName('');
   };
 
   return (
@@ -95,7 +165,7 @@ export default function VerifyPage() {
                 value={walletAddress}
                 onChange={(e) => {
                   setWalletAddress(e.target.value);
-                  setShouldVerify(false);
+                  setShouldFetch(false);
                 }}
                 placeholder="0x..."
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
@@ -104,36 +174,17 @@ export default function VerifyPage() {
               <p className="text-xs text-gray-500 mt-1">The wallet address to verify</p>
             </div>
 
-            {/* Course Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Course/Achievement Name *
-              </label>
-              <input
-                type="text"
-                value={courseName}
-                onChange={(e) => {
-                  setCourseName(e.target.value);
-                  setShouldVerify(false);
-                }}
-                placeholder="e.g., Blockchain Development Bootcamp"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">The exact name of the course or achievement</p>
-            </div>
-
             {/* Buttons */}
             <div className="flex gap-3">
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoadingIds}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold py-4 px-6 rounded-lg hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {isLoading ? 'Verifying...' : 'Verify Certificate'}
+                {isLoadingIds ? 'Loading Certificates...' : 'Get All Certificates'}
               </button>
 
-              {shouldVerify && (
+              {shouldFetch && (
                 <button
                   type="button"
                   onClick={handleReset}
@@ -145,45 +196,45 @@ export default function VerifyPage() {
             </div>
           </form>
 
-          {/* Verification Result */}
-          {shouldVerify && !isLoading && (
+          {/* Certification Results */}
+          {shouldFetch && !isLoadingIds && (
             <div className="mt-8">
-              {hasCertificate ? (
-                <div className="bg-green-50 border-2 border-green-500 rounded-xl p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-3xl">✓</span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-green-800 mb-2">Certificate Verified!</h3>
-                      <p className="text-green-700 mb-4">
-                        This wallet address holds a certificate for <strong>{courseName}</strong>
-                      </p>
-                      <div className="bg-white rounded-lg p-4 border border-green-200">
-                        <p className="text-sm text-gray-600 mb-1">Wallet Address</p>
-                        <p className="font-mono text-xs text-gray-900 break-all">{walletAddress}</p>
+              {tokenIds && Array.isArray(tokenIds) && tokenIds.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="bg-green-50 border-2 border-green-500 rounded-xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-2xl">✓</span>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-green-800">Certificates Found!</h3>
+                        <p className="text-green-700">
+                          This wallet holds {tokenIds.length} certificate{tokenIds.length !== 1 ? 's' : ''}
+                        </p>
                       </div>
                     </div>
                   </div>
+
+                  {/* Display each certificate */}
+                  {tokenIds.map((tokenId) => (
+                    <CertificateCard key={tokenId.toString()} tokenId={tokenId} />
+                  ))}
                 </div>
               ) : (
-                <div className="bg-red-50 border-2 border-red-500 rounded-xl p-6">
+                <div className="bg-yellow-50 border-2 border-yellow-500 rounded-xl p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-3xl">✗</span>
+                    <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-3xl">ℹ</span>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-red-800 mb-2">Certificate Not Found</h3>
-                      <p className="text-red-700 mb-4">
-                        This wallet address does not hold a certificate for <strong>{courseName}</strong>
+                      <h3 className="text-xl font-bold text-yellow-800 mb-2">No Certificates Found</h3>
+                      <p className="text-yellow-700 mb-4">
+                        This wallet address does not hold any certificates yet.
                       </p>
-                      <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <div className="bg-white rounded-lg p-4 border border-yellow-200">
                         <p className="text-sm text-gray-600 mb-1">Wallet Address</p>
                         <p className="font-mono text-xs text-gray-900 break-all">{walletAddress}</p>
                       </div>
-                      <p className="text-sm text-red-600 mt-4">
-                        ⚠️ Make sure the course name matches exactly as it appears on the certificate
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -197,9 +248,10 @@ export default function VerifyPage() {
           <h4 className="font-semibold text-blue-800 mb-2">💡 How Verification Works</h4>
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• Enter the wallet address you want to verify</li>
-            <li>• Enter the exact course/achievement name</li>
-            <li>• The system checks the blockchain for matching certificates</li>
+            <li>• The system retrieves all certificates for that wallet from the blockchain</li>
+            <li>• Each certificate shows course name, recipient, achievement level, and issue date</li>
             <li>• Results are instant and verifiable on-chain</li>
+            <li>• Connected to Polygon Mainnet (chainId 137)</li>
           </ul>
         </div>
       </main>

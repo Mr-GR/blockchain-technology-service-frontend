@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
@@ -14,11 +14,27 @@ export default function AdminPage() {
   const [achievementLevel, setAchievementLevel] = useState('');
   const [tokenURI, setTokenURI] = useState('');
 
-  const { data: hash, writeContract, isPending, error } = useWriteContract();
+  const { data: hash, writeContract, isPending, error, reset: resetWrite } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
+
+  // Reset form when transaction is confirmed
+  useEffect(() => {
+    if (isConfirmed) {
+      const timer = setTimeout(() => {
+        setRecipientAddress('');
+        setCourseName('');
+        setRecipientName('');
+        setAchievementLevel('');
+        setTokenURI('');
+        resetWrite();
+      }, 3000); // Reset after 3 seconds to let user see success message
+
+      return () => clearTimeout(timer);
+    }
+  }, [isConfirmed, resetWrite]);
 
   const handleIssueCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,7 +241,10 @@ export default function AdminPage() {
             <li>• Only the contract owner can issue certificates</li>
             <li>• Certificates are soulbound (non-transferable)</li>
             <li>• Each certificate is unique and permanently on-chain</li>
-            <li>• Metadata can be updated later via IPFS</li>
+            <li>• Connected to <strong>Polygon Mainnet</strong> (chainId 137) - ensure your wallet is on the correct network</li>
+            <li>• Course names are <strong>case-sensitive</strong> - use exact capitalization for consistency</li>
+            <li>• Wait for transaction confirmation before verifying certificates</li>
+            <li>• You can issue the same course to multiple wallets</li>
           </ul>
         </div>
       </main>
