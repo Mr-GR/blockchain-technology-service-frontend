@@ -313,7 +313,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-500">Network:</span>
-              <span className="font-medium">Polygon Amoy Testnet</span>
+              <span className="font-medium">Polygon Mainnet</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-500">Type:</span>
@@ -326,7 +326,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t mt-20 py-8 bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 text-center text-gray-600 text-sm">
-          <p>Built with Next.js, wagmi, RainbowKit & Polygon Amoy</p>
+          <p>Built with Next.js, wagmi, RainbowKit & Polygon</p>
         </div>
       </footer>
     </div>

@@ -12,7 +12,7 @@ export default function AdminPage() {
   const [courseName, setCourseName] = useState('');
   const [recipientName, setRecipientName] = useState('');
   const [achievementLevel, setAchievementLevel] = useState('');
-  const [tokenURI, setTokenURI] = useState('ipfs://example');
+  const [tokenURI, setTokenURI] = useState('');
 
   const { data: hash, writeContract, isPending, error } = useWriteContract();
 
@@ -195,7 +195,7 @@ export default function AdminPage() {
                   <p className="text-blue-800 text-sm">
                     <strong>Transaction Hash:</strong>{' '}
                     <a
-                      href={`https://amoy.polygonscan.com/tx/${hash}`}
+                      href={`https://polygonscan.com/tx/${hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="underline"
