@@ -1,6 +1,6 @@
 'use client';
 
-import { useReadContract } from 'wagmi';
+import { useReadContract, useAccount } from 'wagmi';
 import { CONTRACT_ADDRESS, CONTRACT_ABI, BLOCK_EXPLORER } from '@/lib/contract';
 
 interface CertificateCardProps {
@@ -8,10 +8,20 @@ interface CertificateCardProps {
 }
 
 export function CertificateCard({ tokenId }: CertificateCardProps) {
+  const { address: connectedAddress } = useAccount();
+
   const { data: certDetails } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getCertificationDetails',
+    args: [tokenId],
+  });
+
+  // Get the owner of this token
+  const { data: tokenOwner } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'ownerOf',
     args: [tokenId],
   });
 
@@ -38,6 +48,29 @@ export function CertificateCard({ tokenId }: CertificateCardProps) {
     month: 'long',
     day: 'numeric',
   });
+
+  // Check if the connected wallet is the owner of this certificate
+  const isOwner = connectedAddress && tokenOwner &&
+    connectedAddress.toLowerCase() === tokenOwner.toLowerCase();
+
+  const handleLinkedInShare = () => {
+    // Construct the NFT verification URL on Polygonscan
+    const nftUrl = `${BLOCK_EXPLORER}/token/${CONTRACT_ADDRESS}?a=${tokenId}`;
+
+    // Create the LinkedIn share message
+    const shareText = `I'm excited to share that I've earned a blockchain-verified certificate for "${courseName}"!\n\nAchievement Level: ${achievementLevel}\nIssued: ${formattedDate}\n\nThis soulbound NFT is permanently recorded on the Polygon blockchain and can be verified at: ${nftUrl}\n\n#BlockchainCertification #Web3 #NFT #Achievement`;
+
+    // LinkedIn share URL format
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(nftUrl)}`;
+
+    // Open in new window
+    window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
+
+    // Copy the text to clipboard for easy pasting
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareText).catch(err => console.error('Failed to copy:', err));
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-purple-100 overflow-hidden hover:scale-105 group">
@@ -95,6 +128,25 @@ export function CertificateCard({ tokenId }: CertificateCardProps) {
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <span className="truncate">Non-transferable • Verified on-chain</span>
         </div>
+
+        {/* LinkedIn Share Button - Only visible to owner */}
+        {isOwner && (
+          <button
+            onClick={handleLinkedInShare}
+            className="w-full mt-3 bg-[#0A66C2] hover:bg-[#004182] text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+            aria-label="Share certificate on LinkedIn"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4"
+            >
+              <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+            </svg>
+            <span>Share on LinkedIn</span>
+          </button>
+        )}
       </div>
     </div>
   );

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useReadContract } from 'wagmi';
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
+import { useReadContract, useAccount } from 'wagmi';
+import { CONTRACT_ADDRESS, CONTRACT_ABI, BLOCK_EXPLORER } from '@/lib/contract';
 import Link from 'next/link';
 import { isAddress } from 'viem';
 
@@ -17,10 +17,20 @@ interface CertificationDetails {
 
 // Component to display individual certificate details
 function CertificateCard({ tokenId }: { tokenId: bigint }) {
+  const { address: connectedAddress } = useAccount();
+
   const { data: details, isLoading } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getCertificationDetails',
+    args: [tokenId],
+  });
+
+  // Get the owner of this token
+  const { data: tokenOwner } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'ownerOf',
     args: [tokenId],
   });
 
@@ -37,47 +47,96 @@ function CertificateCard({ tokenId }: { tokenId: bigint }) {
 
   const [courseName, recipientName, achievementLevel, issueDate, tokenURI] = details as [string, string, string, bigint, string];
   const date = new Date(Number(issueDate) * 1000);
+  const formattedDate = date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  // Check if the connected wallet is the owner of this certificate
+  const isOwner = connectedAddress && tokenOwner &&
+    connectedAddress.toLowerCase() === tokenOwner.toLowerCase();
+
+  const handleLinkedInShare = () => {
+    // Construct the NFT verification URL on Polygonscan
+    const nftUrl = `${BLOCK_EXPLORER}/token/${CONTRACT_ADDRESS}?a=${tokenId}`;
+
+    // Create the LinkedIn share message
+    const shareText = `I'm excited to share that I've earned a blockchain-verified certificate for "${courseName}"!\n\nAchievement Level: ${achievementLevel}\nIssued: ${formattedDate}\n\nThis soulbound NFT is permanently recorded on the Polygon blockchain and can be verified at: ${nftUrl}\n\n#BlockchainCertification #Web3 #NFT #Achievement`;
+
+    // LinkedIn share URL format
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(nftUrl)}`;
+
+    // Open in new window
+    window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
+
+    // Copy the text to clipboard for easy pasting
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareText).catch(err => console.error('Failed to copy:', err));
+    }
+  };
 
   return (
     <div className="bg-white border-2 border-purple-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-      <div className="flex items-start gap-4">
-        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-          <span className="text-white text-2xl">🎓</span>
-        </div>
-        <div className="flex-1">
-          <h4 className="text-lg font-bold text-gray-900 mb-2">{courseName}</h4>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Recipient:</span>
-              <span className="text-sm font-semibold text-gray-900">{recipientName}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Achievement:</span>
-              <span className="text-sm font-semibold text-purple-600">{achievementLevel}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Issued:</span>
-              <span className="text-sm font-semibold text-gray-900">{date.toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Token ID:</span>
-              <span className="text-sm font-mono text-gray-900">#{tokenId.toString()}</span>
-            </div>
-            {/* {tokenURI && (
+      <div className="flex flex-col gap-4">
+        <div className="flex items-start gap-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-2xl">🎓</span>
+          </div>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-gray-900 mb-2">{courseName}</h4>
+            <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Metadata:</span>
-                <a
-                  href={tokenURI}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline truncate"
-                >
-                  {tokenURI.slice(0, 40)}...
-                </a>
+                <span className="text-sm text-gray-600">Recipient:</span>
+                <span className="text-sm font-semibold text-gray-900">{recipientName}</span>
               </div>
-            )} */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Achievement:</span>
+                <span className="text-sm font-semibold text-purple-600">{achievementLevel}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Issued:</span>
+                <span className="text-sm font-semibold text-gray-900">{date.toLocaleDateString()}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Token ID:</span>
+                <span className="text-sm font-mono text-gray-900">#{tokenId.toString()}</span>
+              </div>
+              {/* {tokenURI && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Metadata:</span>
+                  <a
+                    href={tokenURI}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:underline truncate"
+                  >
+                    {tokenURI.slice(0, 40)}...
+                  </a>
+                </div>
+              )} */}
+            </div>
           </div>
         </div>
+
+        {/* LinkedIn Share Button - Only visible to owner */}
+        {isOwner && (
+          <button
+            onClick={handleLinkedInShare}
+            className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+            aria-label="Share certificate on LinkedIn"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4"
+            >
+              <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+            </svg>
+            <span>Share on LinkedIn</span>
+          </button>
+        )}
       </div>
     </div>
   );
