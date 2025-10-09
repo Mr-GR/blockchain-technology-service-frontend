@@ -1,10 +1,10 @@
-# Certification NFT - Soulbound Digital Credentials
+# Block Certify - Soulbound Digital Credentials
 
 A blockchain-based certification system using non-transferable (soulbound) NFTs for issuing verifiable credentials on Polygon Amoy testnet.
 
 ## Overview
 
-Certification NFT is a decentralized application that enables institutions, bootcamps, and organizations to issue tamper-proof, verifiable digital certificates as NFTs. These certificates are **soulbound** (non-transferable), ensuring they permanently represent the recipient's achievement.
+Block Certify is a decentralized application that enables institutions, bootcamps, and organizations to issue tamper-proof, verifiable digital certificates as NFTs. These certificates are **soulbound** (non-transferable), ensuring they permanently represent the recipient's achievement.
 
 ### Key Features
 
