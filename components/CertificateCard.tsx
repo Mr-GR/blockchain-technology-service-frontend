@@ -23,7 +23,7 @@ export function CertificateCard({ tokenId }: CertificateCardProps) {
     abi: CONTRACT_ABI,
     functionName: 'ownerOf',
     args: [tokenId],
-  });
+  }) as { data: `0x${string}` | undefined };
 
   if (!certDetails) {
     return (
