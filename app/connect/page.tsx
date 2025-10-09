@@ -15,7 +15,7 @@ export default function ConnectPage() {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight pb-0.5">
-                Certification NFT
+                Block Certify
               </h1>
               <p className="text-xs text-gray-500 leading-tight">Soulbound Credentials</p>
             </div>

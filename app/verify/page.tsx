@@ -52,7 +52,7 @@ function CertificateCard({ tokenId }: { tokenId: bigint }) {
               <span className="text-sm font-semibold text-gray-900">{recipientName}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Achievement Level:</span>
+              <span className="text-sm text-gray-600">Achievement:</span>
               <span className="text-sm font-semibold text-purple-600">{achievementLevel}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ function CertificateCard({ tokenId }: { tokenId: bigint }) {
               <span className="text-sm text-gray-600">Token ID:</span>
               <span className="text-sm font-mono text-gray-900">#{tokenId.toString()}</span>
             </div>
-            {tokenURI && (
+            {/* {tokenURI && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Metadata:</span>
                 <a
@@ -75,7 +75,7 @@ function CertificateCard({ tokenId }: { tokenId: bigint }) {
                   {tokenURI.slice(0, 40)}...
                 </a>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function VerifyPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Certification NFT
+                  Block Certify
                 </h1>
                 <p className="text-xs text-gray-500">Verification Tool</p>
               </div>
