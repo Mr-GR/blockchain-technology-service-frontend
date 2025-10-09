@@ -229,8 +229,9 @@ export default function Home() {
           </div>
 
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-purple-100 hover:shadow-xl transition-shadow">
-            <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">Total Certificates</div>
+            <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">Total Certificates Issued</div>
             <div className="text-lg sm:text-2xl font-bold text-gray-900">{totalCerts?.toString() || '0'}</div>
+            <div className="text-xs text-gray-400 mt-1">Across all courses</div>
           </div>
         </div>
 
