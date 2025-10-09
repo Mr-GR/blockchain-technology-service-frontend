@@ -1,6 +1,9 @@
 # Block Certify - Soulbound Digital Credentials
 
-A blockchain-based certification system using non-transferable (soulbound) NFTs for issuing verifiable credentials on Polygon Amoy testnet.
+**Live Site:** [https://www.blockcertify.io](https://www.blockcertify.io)
+**Network:** Polygon Mainnet
+
+A blockchain-based certification system using non-transferable (soulbound) NFTs for issuing verifiable credentials on Polygon blockchain.
 
 ## Overview
 
@@ -21,7 +24,7 @@ Block Certify is a decentralized application that enables institutions, bootcamp
 - **Solidity** - Smart contract development
 - **OpenZeppelin** - Secure ERC-721 implementation
 - **Hardhat** - Ethereum development environment
-- **Polygon Amoy** - Testnet deployment
+- **Polygon Mainnet** - Production deployment
 
 ### Frontend
 - **Next.js 14** - React framework
@@ -36,7 +39,17 @@ Block Certify is a decentralized application that enables institutions, bootcamp
 ### Prerequisites
 - Node.js 18+ installed
 - MetaMask or compatible Web3 wallet
-- Polygon Amoy testnet configured in wallet
+- Polygon Mainnet configured in wallet
+
+## 🔍 Test It Yourself
+
+To see a verified blockchain certificate in action, use the following **test wallet address**:
+
+```
+0x742393C6DE984A492C807c48EbDf201E33179388
+```
+
+You can paste this address in the verification field at [BlockCertify.io](https://www.blockcertify.io) to fetch and verify an existing NFT certificate on Polygon Mainnet.
 
 ### Installation
 
@@ -79,7 +92,7 @@ http://localhost:3000
 ### For Certificate Recipients
 
 1. Connect your wallet to the app
-2. Switch to **Polygon Amoy** network
+2. Switch to **Polygon Mainnet** network
 3. View your certificates on the home page
 4. Certificates appear automatically once issued
 
@@ -95,9 +108,9 @@ http://localhost:3000
 
 **Contract Address:** `0xbc9bb1E472c072B085415481D83f11BBcC629915`
 
-**Network:** Polygon Amoy Testnet (Chain ID: 80002)
+**Network:** Polygon Mainnet (Chain ID: 137)
 
-**Explorer:** [View on Polygonscan](https://amoy.polygonscan.com/address/0xbc9bb1E472c072B085415481D83f11BBcC629915)
+**Explorer:** [View on Polygonscan](https://polygonscan.com/address/0xbc9bb1E472c072B085415481D83f11BBcC629915)
 
 ### Contract Features
 
@@ -153,7 +166,7 @@ Get a free WalletConnect Project ID at [cloud.walletconnect.com](https://cloud.w
 
 ## 📄 License
 
-ISC
+MIT License - see the [LICENSE](LICENSE) file for details
 
 ## 🤝 Contributing
 
@@ -165,4 +178,4 @@ Built for hackathon demonstration
 
 ---
 
-**Smart Contract:** [View on Polygonscan](https://amoy.polygonscan.com/address/0xbc9bb1E472c072B085415481D83f11BBcC629915)
+**Smart Contract:** [View on Polygonscan](https://polygonscan.com/address/0xbc9bb1E472c072B085415481D83f11BBcC629915)
