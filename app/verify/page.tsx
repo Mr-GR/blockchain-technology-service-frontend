@@ -32,7 +32,7 @@ function CertificateCard({ tokenId }: { tokenId: bigint }) {
     abi: CONTRACT_ABI,
     functionName: 'ownerOf',
     args: [tokenId],
-  });
+  }) as { data: `0x${string}` | undefined };
 
   if (isLoading) {
     return (
